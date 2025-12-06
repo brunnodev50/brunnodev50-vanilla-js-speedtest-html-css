@@ -1,46 +1,56 @@
 # ⚡ Vanilla JS Speed Test (Cyberpunk Edition)
 
-![Project Status](https://img.shields.io/badge/status-finished-success) ![License](https://img.shields.io/badge/license-MIT-blue)
+![Project Status](https://img.shields.io/badge/status-finished-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Technology](https://img.shields.io/badge/tech-Vanilla%20JS-yellow)
 
-Um medidor de velocidade de internet responsivo, desenvolvido com **Vanilla JavaScript** puro, focado em performance, manipulação do DOM e uma estética futurista **Neon/Cyberpunk**.
+Um medidor de velocidade de internet responsivo, desenvolvido com **Vanilla JavaScript** puro. O projeto combina performance técnica, manipulação avançada do DOM e uma estética imersiva **Neon/Cyberpunk**.
 
-![Preview do Projeto](https://via.placeholder.com/800x400?text=Adicione+um+Print+ou+GIF+do+Projeto+Aqui)
-*(Dica: Substitua essa imagem acima por um print da tela do seu projeto)*
+![Preview Desktop](https://github.com/user-attachments/assets/78853eb8-e83a-46f5-b899-59e09e60a230)
 
-> "Um medidor de velocidade focado não apenas em métricas, mas na experiência visual do usuário."
+---
+
+### 🟢 Teste Agora (Live Demo)
+O projeto está hospedado e funcionando em tempo real. Clique abaixo para testar sua conexão:
+
+## 👉 [Acessar Demonstração Online](https://brunnodev50.github.io/brunnodev50-vanilla-js-speedtest-html-css/)
+
+---
+
+## 📸 Previews (Responsividade)
+
+O layout foi projetado seguindo a metodologia *Mobile First*, adaptando-se perfeitamente a diferentes resoluções.
+
+| Desktop View (Início) | Mobile View 1 | Mobile View 2 |
+| :---: | :---: | :---: |
+| ![Desktop](https://github.com/user-attachments/assets/6b3c15e1-aa10-47dd-a40c-8cc56d7bfc09) | ![Mobile 1](https://github.com/user-attachments/assets/aeea7098-8cba-4067-a50d-7b70fcf49087) | ![Mobile 2](https://github.com/user-attachments/assets/b337d83d-3088-458b-b593-021e431fc952) |
 
 ## 🚀 Funcionalidades
 
 - **Teste de Download Real:** Realiza o download de um arquivo de teste de 10MB (via servidor confiável) para cálculo preciso de banda em tempo real.
-- **Fallback Inteligente:** Sistema de contingência que utiliza a `navigator.connection` API caso o download principal sofra bloqueios (CORS/Adblock).
-- **Interface Cyberpunk:** Design imersivo com efeitos de vidro (Glassmorphism), animações de scanner e "glitch text".
-- **Visualização de Dados:** Medidor circular (Gauge) feito em SVG dinâmico que reage à velocidade.
-- **Totalmente Responsivo:** Layout fluido que funciona perfeitamente em Desktop e Mobile.
+- **Fallback Inteligente:** Sistema de contingência que utiliza a `navigator.connection` API caso o download principal sofra bloqueios (CORS/Adblock), garantindo que a UI nunca trave.
+- **Interface Cyberpunk:** Design com efeitos de vidro (Glassmorphism), animações de scanner, grid 3D e tipografia técnica.
+- **Visualização de Dados:** Medidor circular (Gauge) feito em **SVG dinâmico** que reage instantaneamente à velocidade detectada.
+- **Totalmente Responsivo:** Layout fluido que se adapta a qualquer tamanho de tela.
 
 ## 🛠 Tecnologias Utilizadas
 
-- **HTML5 Semântico:** Estrutura limpa e organizada.
-- **CSS3 Avançado:**
-  - CSS Grid & Flexbox para layout.
-  - `@keyframes` para animações de performance.
+- **HTML5:** Estrutura semântica.
+- **CSS3:**
+  - `Grid` e `Flexbox` para layout.
+  - `@keyframes` para animações de performance (60fps).
   - Variáveis CSS (Custom Properties) para gerenciamento de tema neon.
 - **Vanilla JavaScript (ES6+):**
-  - `XMLHttpRequest` para monitoramento de progresso de download.
-  - `Promises` e `Async/Await` para gerenciamento de fluxo assíncrono.
-  - Manipulação direta do DOM (sem frameworks).
+  - `XMLHttpRequest`: Para monitoramento granular do progresso de download (`onprogress`).
+  - `Promises` & `Async/Await`: Para gerenciamento de fluxo assíncrono.
+  - `DOM Manipulation`: Atualização da UI sem uso de frameworks virtuais.
 
-## 🔗 Live Demo (Teste Online)
+## 🧠 Como Funciona a Lógica
 
-Você pode testar o projeto rodando diretamente no navegador através do link abaixo:
+O cálculo de velocidade segue o seguinte algoritmo:
 
-👉 **[Acesse a Demonstração Online Aqui](https://brunnodev50.github.io/brunnodev50-vanilla-js-speedtest-html-css/)**
-
-*(Nota: Certifique-se de ativar o GitHub Pages nas configurações do repositório para que este link funcione)*
-
-## 📂 Como rodar localmente
-
-Se quiser baixar o código para estudar ou modificar:
-
-1. Clone este repositório:
-   ```bash
-   git clone [https://github.com/brunnodev50/brunnodev50-vanilla-js-speedtest-html-css.git](https://github.com/brunnodev50/brunnodev50-vanilla-js-speedtest-html-css.git)
+1. **Start:** O script inicia o download de um arquivo binário de tamanho conhecido (ex: 10MB).
+2. **Timestamp:** Marca o tempo inicial (`performance.now()`).
+3. **Progress:** Durante o download, o evento `onprogress` calcula quantos bytes foram baixados.
+4. **Cálculo:**
+   ```javascript
+   Velocidade (bps) = (Bytes Carregados * 8) / Tempo Decorrido (s)
+   Mbps = Velocidade / (1024 * 1024)
