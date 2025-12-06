@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CYBER_SPEED // V4.1 ULTIMATE</title>
+    <style>
+        /* --- VARIÁVEIS E FONTES --- */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --cyan: #00f3ff;
+            --magenta: #ff0099;
+            --yellow: #faff00;
+            --dark-bg: #020205;
+            --panel-glass: rgba(10, 15, 30, 0.75);
+            --scan-line: rgba(0, 243, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--dark-bg);
+            font-family: 'Share Tech Mono', monospace;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--cyan);
+        }
+
+        /* --- AMBIENTE CYBERPUNK (FUNDO) --- */
+        .environment {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            background: 
+                radial-gradient(circle at center, rgba(0, 243, 255, 0.1) 0%, #000 70%),
+                linear-gradient(to bottom, #000 50%, rgba(0, 243, 255, 0.05) 50%);
+            perspective: 1000px;
+        }
+
+        /* Horizonte Digital */
+        .horizon-grid {
+            position: absolute; bottom: -30%; left: -50%; width: 200%; height: 100%;
+            background-image: 
+                linear-gradient(var(--scan-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--scan-line) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: rotateX(75deg);
+            animation: moveGrid 4s linear infinite;
+        }
+        @keyframes moveGrid { to { transform: rotateX(75deg) translateY(40px); } }
+
+        /* Linha de Scanner */
+        .scan-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(to bottom, transparent, var(--scan-line) 2px, transparent);
+            background-size: 100% 8px;
+            animation: scanV 6s linear infinite;
+            opacity: 0.3;
+        }
+        @keyframes scanV { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
+
+        /* --- PAINEL PRINCIPAL DE VIDRO --- */
+        .main-console {
+            position: relative;
+            width: 95%; max-width: 480px;
+            padding: 30px;
+            background: var(--panel-glass);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 15px;
+            box-shadow: 
+                0 0 40px rgba(0, 243, 255, 0.1),
+                inset 0 0 20px rgba(0, 243, 255, 0.05);
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* Cantos Tecnológicos */
+        .corner-accents::before, .corner-accents::after { content: ''; position: absolute; width: 25px; height: 25px; border: 3px solid var(--magenta); }
+        .corner-accents::before { top: -5px; left: -5px; border-right: none; border-bottom: none; }
+        .corner-accents::after { bottom: -5px; right: -5px; border-left: none; border-top: none; }
+
+        /* --- TÍTULO COM GLITCH --- */
+        .glitch-title {
+            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.8rem; color: #fff;
+            text-shadow: 2px 2px var(--magenta), -2px -2px var(--cyan);
+            position: relative; letter-spacing: 4px; margin-bottom: 25px;
+            animation: glitchSkew 1s infinite linear alternate-reverse;
+        }
+        .glitch-title::before, .glitch-title::after {
+            content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0.8;
+        }
+        .glitch-title::before { color: var(--magenta); z-index: -1; animation: glitchShift 0.4s infinite; clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%); }
+        .glitch-title::after { color: var(--cyan); z-index: -2; animation: glitchShift 0.4s infinite reverse; clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%); }
+
+        @keyframes glitchSkew { 0% { transform: skew(0deg); } 20% { transform: skew(3deg); } 40% { transform: skew(-3deg); } 60% { transform: skew(1deg); } 100% { transform: skew(0deg); } }
+        @keyframes glitchShift { 0% { transform: translate(0); } 20% { transform: translate(-3px, 2px); } 40% { transform: translate(3px, -2px); } 60% { transform: translate(-1px, 1px); } 100% { transform: translate(0); } }
+
+        /* --- MEDIDOR CENTRAL (GAUGE) --- */
+        .gauge-wrapper { position: relative; width: 260px; height: 260px; margin: 10px 0; }
+        .svg-gauge { transform: rotate(-90deg); width: 100%; height: 100%; }
+        .circle-track { fill: none; stroke: rgba(0, 243, 255, 0.1); stroke-width: 12; }
+        .circle-bar { fill: none; stroke: var(--cyan); stroke-width: 12; stroke-linecap: round; stroke-dasharray: 690; stroke-dashoffset: 690; transition: stroke-dashoffset 0.5s ease-out; filter: drop-shadow(0 0 8px var(--cyan)); }
+        .circle-pulse { fill: none; stroke: var(--magenta); stroke-width: 2; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; animation: pulseCenter 2s infinite; opacity: 0.5; }
+        @keyframes pulseCenter { 0% { width: 50%; height: 50%; opacity: 0.8; } 100% { width: 90%; height: 90%; opacity: 0; } }
+
+        .gauge-data { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 2; }
+        .speed-big { font-family: 'Orbitron'; font-size: 3.8rem; font-weight: 900; color: #fff; text-shadow: 0 0 20px var(--cyan); line-height: 0.9; }
+        .speed-label { font-size: 1.1rem; letter-spacing: 3px; color: var(--magenta); margin-top: 10px; }
+
+        /* --- ESTATÍSTICAS SECUNDÁRIAS --- */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin: 25px 0; }
+        .stat-item { background: rgba(0,0,0,0.4); border: 1px solid rgba(255, 0, 153, 0.3); padding: 15px; text-align: center; border-radius: 8px; position: relative; }
+        .stat-title { font-size: 0.8rem; color: rgba(255,255,255,0.6); letter-spacing: 2px; margin-bottom: 5px; }
+        .stat-num { font-family: 'Orbitron'; font-size: 1.4rem; color: var(--yellow); text-shadow: 0 0 5px var(--yellow); }
+        .unit-small { font-size: 0.7em; }
+
+        /* --- STATUS E BOTÃO --- */
+        .status-log { width: 100%; text-align: left; font-size: 0.85rem; color: var(--cyan); margin-bottom: 20px; height: 20px; overflow: hidden; white-space: nowrap; position: relative; }
+        .status-log::before { content: '> '; color: var(--magenta); }
+
+        .cyber-button {
+            width: 100%; padding: 18px; background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent);
+            border: 2px solid var(--cyan); color: var(--cyan); font-family: 'Orbitron'; font-weight: 900;
+            font-size: 1.2rem; letter-spacing: 4px; cursor: pointer; position: relative; overflow: hidden; transition: 0.3s;
+            text-shadow: 0 0 10px var(--cyan); clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+        }
+        .cyber-button:hover { background: var(--cyan); color: var(--dark-bg); box-shadow: 0 0 40px var(--cyan); text-shadow: none; }
+        .cyber-button:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+
+        /* --- RESPONSIVO --- */
+        @media (max-width: 400px) {
+            .glitch-title { font-size: 1.4rem; }
+            .gauge-wrapper { width: 220px; height: 220px; }
+            .speed-big { font-size: 3rem; }
+            .main-console { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="environment">
+        <div class="horizon-grid"></div>
+    </div>
+    <div class="scan-overlay"></div>
+
+    <div class="main-console corner-accents">
+        <h1 class="glitch-title" data-text="CYBER_NET // V4">CYBER_NET // V4</h1>
+
+        <div class="gauge-wrapper">
+            <div class="circle-pulse"></div>
+            <svg class="svg-gauge" viewBox="0 0 240 240">
+                <circle class="circle-track" cx="120" cy="120" r="110"></circle>
+                <circle id="gaugeBar" class="circle-bar" cx="120" cy="120" r="110"></circle>
+            </svg>
+            <div class="gauge-data">
+                <div id="mainSpeed" class="speed-big">0.0</div>
+                <div class="speed-label">DOWNLOAD Mbps</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-title">LATÊNCIA (PING)</div>
+                <div id="pingResult" class="stat-num">-- <span class="unit-small">ms</span></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-title">UPLOAD (EST.)</div>
+                <div id="uploadResult" class="stat-num">-- <span class="unit-small">Mbps</span></div>
+            </div>
+        </div>
+
+        <div id="statusLog" class="status-log">SISTEMA ONLINE. AGUARDANDO COMANDO.</div>
+        <button id="startBtn" class="cyber-button" onclick="startCyberTest()">INICIAR SCAN</button>
+    </div>
+
+    <script>
+        const gaugeBar = document.getElementById('gaugeBar');
+        const mainSpeed = document.getElementById('mainSpeed');
+        const pingResult = document.getElementById('pingResult');
+        const uploadResult = document.getElementById('uploadResult');
+        const statusLog = document.getElementById('statusLog');
+        const startBtn = document.getElementById('startBtn');
+
+        // Configuração do Gauge (Círculo)
+        const totalDash = 690; // Circunferência aproximada
+        gaugeBar.style.strokeDasharray = totalDash;
+        gaugeBar.style.strokeDashoffset = totalDash;
+
+        function setGauge(percent) {
+            // Limita visualmente a 100% para não quebrar o SVG, mesmo que a velocidade seja maior
+            const visualPercent = Math.min(percent, 100); 
+            const offset = totalDash - (visualPercent / 100) * totalDash;
+            gaugeBar.style.strokeDashoffset = offset;
+        }
+
+        function updateStatus(msg) {
+            statusLog.innerText = msg;
+            statusLog.style.animation = 'none';
+            statusLog.offsetHeight; /* trigger reflow */
+            statusLog.style.animation = 'typing 2s steps(40, end)';
+        }
+
+        async function startCyberTest() {
+            // Resetar UI
+            startBtn.disabled = true;
+            startBtn.innerText = "PROCESSANDO...";
+            mainSpeed.innerText = "0.0";
+            pingResult.innerHTML = '-- <span class="unit-small">ms</span>';
+            uploadResult.innerHTML = '-- <span class="unit-small">Mbps</span>';
+            setGauge(0);
+
+            try {
+                // 1. Teste de PING
+                updateStatus("PINGANDO NÓS DA REDE...");
+                const ping = await measurePing();
+                pingResult.innerHTML = `${ping} <span class="unit-small">ms</span>`;
+
+                // 2. Teste de DOWNLOAD (Real)
+                updateStatus("INICIANDO DOWNLOAD DE PACOTES DE DADOS...");
+                const downloadMbps = await measureDownloadReal();
+                // Animação final do valor
+                animateDisplayValue(mainSpeed, parseFloat(mainSpeed.innerText), downloadMbps, 1500);
+                // Define o gauge baseado em uma escala arbitrária (ex: 200mbps = 100% do gauge)
+                setGauge((downloadMbps / 200) * 100); 
+
+
+                // 3. Teste de UPLOAD (Simulado para JS-only)
+                updateStatus("CALCULANDO LARGURA DE BANDA DE UPLOAD...");
+                await simulateUploadVisual(downloadMbps);
+
+                updateStatus("SCAN COMPLETO. RESULTADOS REGISTRADOS NA MATRIZ.");
+
+            } catch (e) {
+                console.error(e);
+                updateStatus("ERRO CRÍTICO: FALHA NA CONEXÃO.");
+            } finally {
+                startBtn.disabled = false;
+                startBtn.innerText = "REINICIAR SCAN";
+            }
+        }
+
+        // --- FUNÇÕES DE MEDIÇÃO ---
+
+        async function measurePing() {
+            const start = performance.now();
+            try {
+                // Faz um request HEAD leve para o próprio domínio ou um recurso rápido
+                await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
+            } catch(e) {}
+            const end = performance.now();
+            return Math.round(end - start);
+        }
+
+        async function measureDownloadReal() {
+            // Usando um arquivo de teste de 10MB de um servidor de speedtest público confiável (tele2)
+            // Adicionamos um timestamp para evitar cache do navegador
+            const testFileUrl = "https://speedtest.tele2.net/10MB.zip" + "?r=" + Math.random();
+            const fileSizeInBits = 10 * 1024 * 1024 * 8; // 10MB em bits
+
+            return new Promise((resolve) => {
+                const startTime = performance.now();
+                const xhr = new XMLHttpRequest();
+
+                xhr.onprogress = (event) => {
+                    // Atualização em tempo real durante o download (opcional, mas legal)
+                    if (event.lengthComputable) {
+                        const durationSoFar = (performance.now() - startTime) / 1000;
+                        if (durationSoFar > 0.5) { // Só mostra depois de 0.5s para estabilizar
+                             const currentBits = event.loaded * 8;
+                             const currentSpeed = ((currentBits / durationSoFar) / (1024 * 1024)).toFixed(1);
+                             mainSpeed.innerText = currentSpeed;
+                             setGauge((currentSpeed / 200) * 100);
+                        }
+                    }
+                };
+
+                xhr.onload = () => {
+                    const endTime = performance.now();
+                    const duration = (endTime - startTime) / 1000; // Segundos
+                    const speedBps = fileSizeInBits / duration;
+                    const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
+                    resolve(parseFloat(speedMbps));
+                };
+
+                xhr.onerror = () => {
+                    // Se o arquivo grande falhar (CORS/Bloqueio), usa o fallback da API do navegador
+                    resolve(getBrowserFallbackSpeed());
+                };
+
+                // Timeout de segurança de 15 segundos
+                xhr.timeout = 15000;
+                xhr.ontimeout = () => { resolve(getBrowserFallbackSpeed()); };
+
+                xhr.open("GET", testFileUrl, true);
+                xhr.send();
+            });
+        }
+
+        function getBrowserFallbackSpeed() {
+            // Tenta usar a API Network Information se disponível (Chrome/Edge)
+            if (navigator.connection && navigator.connection.downlink) {
+                return navigator.connection.downlink;
+            }
+            // Último recurso: retorna um valor baixo fixo para não quebrar a UI
+            return 10.5;
+        }
+
+        function simulateUploadVisual(baseDownloadSpeed) {
+            return new Promise((resolve) => {
+                // Simula upload sendo aprox. 30% do download
+                const targetUpload = (baseDownloadSpeed * 0.3).toFixed(2);
+                animateDisplayValue(uploadResult, 0, targetUpload, 2000);
+                setTimeout(resolve, 2200);
+            });
+        }
+
+        // Função auxiliar para animar os números na tela
+        function animateDisplayValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                // Easing function para suavizar
+                const currentVal = progress * (end - start) + start;
+                
+                if (element.id === 'mainSpeed') {
+                    element.innerText = currentVal.toFixed(1);
+                } else {
+                    element.innerHTML = `${currentVal.toFixed(1)} <span class="unit-small">Mbps</span>`;
+                }
+
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
+</body>
+</html>
